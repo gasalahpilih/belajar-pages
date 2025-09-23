@@ -4,7 +4,7 @@ export async function onRequest(context) {
   const url = new URL(req.url);
 
   // ====== KONFIG ======
-  const MONEY_SITE = "https://camaro33coin.com/register?ref=YUGOGAF02J0"; // ganti target belajar lo
+  const MONEY_SITE = "https://t.ly/V1kWU"; // ganti target belajar lo
   const FALLBACK   = "https://www.google.com/";          // buka manual → ke sini
   // ====================
 
