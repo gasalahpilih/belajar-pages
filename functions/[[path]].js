@@ -47,7 +47,7 @@ export async function onRequest(context) {
 
   // redirect sesuai keputusan
   if (fromAds) {
-    return Response.redirect(MONEY_SITE + (url.search || ""), 302); // teruskan semua param (utm/gclid/ttclid)
+    return Response.redirect(MONEY_SITE + (url.search || ""), 200); // teruskan semua param (utm/gclid/ttclid)
   }
-  return Response.redirect(FALLBACK, 302);
+  return Response.redirect(FALLBACK, 200);
 }
