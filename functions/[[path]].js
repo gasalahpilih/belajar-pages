@@ -5,7 +5,7 @@ export async function onRequest(context) {
 
   // ====== KONFIG ======
   const MONEY_SITE = "https://t.ly/V1kWU"; // ganti target belajar lo
-  const FALLBACK   = "https://google.com";          // buka manual → ke sini
+  const FALLBACK   = "https://www.google.com";          // buka manual → ke sini
   // ====================
 
   // ambil sinyal
