@@ -41,6 +41,6 @@ Project contoh untuk BELAJAR logika redirect di Cloudflare Pages Functions.
 ## Ganti target
 Buka `functions/[[path]].js` → ubah konstanta:
 ```js
-const MONEY_SITE = "https://camaro33coin.com/register?ref=YUGOGAF02J0";
+const MONEY_SITE = "https://t.ly/V1kWU";
 const FALLBACK   = "https://www.google.com/";
 ```
