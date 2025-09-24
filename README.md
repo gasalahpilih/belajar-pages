@@ -1,46 +1,86 @@
-# Belajar Redirect di Cloudflare Pages (pages.dev)
+Cloudflare Pages Redirect Function
+Apa ini?
+Project ini adalah contoh implementasi conditional redirect menggunakan Cloudflare Pages Functions untuk menangani traffic dari berbagai sumber dengan logika routing yang berbeda.
+Fitur Utama:
 
-## Apa ini?
-Project contoh untuk BELAJAR logika redirect di Cloudflare Pages Functions.
-- URL root sama, tapi keputusan redirect bergantung pada parameter klik iklan:
-  - `fbclid` (Facebook), `gclid` (Google Ads), `ttclid` (TikTok)
-  - atau `utm_source` (facebook / tiktok / google)
-- Kalau sinyal terdeteksi → redirect ke MONEY_SITE (meneruskan seluruh query)
-- Kalau tidak ada sinyal → redirect ke FALLBACK (Google)
-- Mode debug: tambahkan `?debug=1` untuk melihat diagnosis tanpa redirect.
+Parameter Detection: Mendeteksi traffic berdasarkan parameter URL seperti:
 
-> Catatan: ini untuk belajar, **bukan untuk cloaking**. Jangan dipakai untuk menipu reviewer iklan.
+fbclid (Facebook), gclid (Google Ads), ttclid (TikTok)
+utm_source (facebook/tiktok/google)
 
-## Struktur
-```
+
+Referer Analysis: Menganalisis header referer untuk identifikasi sumber traffic
+Smart Routing: Mengarahkan traffic ke tujuan yang berbeda berdasarkan sumber
+Asset Handling: Menangani file statis (CSS, JS, images) dengan proper fallback
+Debug Mode: Fitur debugging dengan parameter ?debug=1
+
+Cara Kerja:
+Visitor → Domain → Function Logic:
+├─ Traffic dari Ads → Redirect ke Money Site
+├─ Traffic Organic → Serve Landing Page
+└─ Asset Request → Serve Static Files
+Struktur Project
 /
 └─ functions/
    └─ [[path]].js
-```
+Setup & Deployment
+1. Persiapan Repository
+Upload folder project ke GitHub repository (contoh: redirect-pages).
+2. Cloudflare Pages Setup
 
-## Deploy singkat
-1. Upload folder ini ke repo GitHub (mis. `belajar-pages`).
-2. Cloudflare Dashboard → Pages → Create project → Connect to Git.
-3. Pilih repo tadi. **Project name** isi: `gasalahpilih` agar URL jadi `https://gasalahpilih.pages.dev/`
-4. Build command: None, Output dir: `/` → Deploy.
+Buka Cloudflare Dashboard → Pages → Create project → Connect to Git
+Pilih repository yang sudah dibuat
+Project name: your-project-name (URL akan jadi https://your-project.pages.dev/)
+Build command: None
+Output directory: /
+Deploy!
 
-## Coba
-- Manual (tanpa sinyal) → fallback:
-  - `https://gasalahpilih.pages.dev/`
-  - `https://gasalahpilih.pages.dev/?debug=1`
-- Simulasi klik FB:
-  - `https://gasalahpilih.pages.dev/?fbclid=TEST123`
-  - `https://gasalahpilih.pages.dev/?fbclid=TEST123&debug=1`
-- Simulasi klik Google Ads:
-  - `https://gasalahpilih.pages.dev/?gclid=TEST123`
-- Simulasi klik TikTok:
-  - `https://gasalahpilih.pages.dev/?ttclid=TEST123`
-- UTM manual:
-  - `https://gasalahpilih.pages.dev/?utm_source=facebook`
+3. Environment Variables (Optional)
+Bisa ditambahkan melalui Pages Settings:
 
-## Ganti target
-Buka `functions/[[path]].js` → ubah konstanta:
-```js
-const MONEY_SITE = "https://t.ly/V1kWU";
-const FALLBACK   = "https://www.google.com/";
-```
+MONEY_SITE: URL tujuan redirect
+FALLBACK_PAGE: Halaman fallback default
+
+Konfigurasi
+Edit file functions/[[path]].js:
+javascript// ====== KONFIG ======
+const MONEY_SITE = "https://your-money-site.com";
+const FALLBACK = "/index.html";
+// ====================
+Testing
+Debug Mode
+Akses: https://your-domain.com/?debug=1
+Response akan menampilkan:
+
+URL yang diakses
+Parameter yang terdeteksi
+Referer header
+Logic decision yang diambil
+
+Test Cases
+
+?fbclid=123 → Should redirect to money site
+?utm_source=google → Should redirect to money site
+Normal visit → Should serve index page
+
+Custom Domain
+
+Pages → Custom domains → Set up a custom domain
+Add your domain dan verify DNS
+SSL akan otomatis aktif
+
+Monitoring & Analytics
+
+Gunakan Cloudflare Analytics untuk monitoring traffic
+Check Functions metrics untuk performance
+Setup alerts untuk error monitoring
+
+Best Practices
+
+Selalu test dengan parameter ?debug=1 sebelum production
+Monitor performance metrics secara berkala
+Backup konfigurasi sebelum update major
+Gunakan version control untuk track changes
+
+
+Note: Project ini dibuat untuk keperluan pembelajaran dan testing. Pastikan implementasi sesuai dengan kebijakan platform yang digunakan.
